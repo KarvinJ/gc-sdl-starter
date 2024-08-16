@@ -90,18 +90,18 @@ int main(int argc, char **argv)
 		return 1;
 	}
 
-	PAD_Init();
-
 	Uint32 previousFrameTime = SDL_GetTicks();
     Uint32 currentFrameTime = previousFrameTime;
     float deltaTime = 0.0f;
 
+	PAD_Init();
+	
 	while (true)
 	{
 		PAD_ScanPads();
 
 		currentFrameTime = SDL_GetTicks();
-        deltaTime = (currentFrameTime - previousFrameTime) / 1000.0f; // Convert to seconds
+        deltaTime = (currentFrameTime - previousFrameTime) / 1000.0f;
         previousFrameTime = currentFrameTime;
 
         handleEvents();
