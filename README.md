@@ -4,7 +4,7 @@ A Very simple Nintendo GameCube SDL2 STARTER.
 
 # Building
 
-Requires devkitPro with the Nintendo GameCube toolchain, SDL2, SDL2_Image SDL2_mixer SDL2_ttf for the GameCube.
+Requires devkitPro with the Nintendo GameCube toolchain and SDL2 for the GameCube.
 
 ## Building instructions
 
