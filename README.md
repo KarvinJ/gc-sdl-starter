@@ -19,7 +19,7 @@ I built everything using Windows 10
 *I recommend to install all the gamecube-portlibs libraries/
 
 * Clone this repo:  
-  `git clone https://github.com/ArkhamKnightXD/gc-sdl-starter.git`
+  `git clone https://github.com/KarvinJ/gc-sdl-starter.git`
 
 * `gc-sdl-starter`
 * `make`
