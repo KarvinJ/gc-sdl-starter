@@ -21,5 +21,5 @@ I built everything using Windows 10
 * Clone this repo:  
   `git clone https://github.com/KarvinJ/gc-sdl-starter.git`
 
-* `gc-sdl-starter`
+* `cd gc-sdl-starter`
 * `make`
