@@ -142,12 +142,8 @@ int main(int argc, char **argv)
 	Uint32 currentFrameTime = previousFrameTime;
 	float deltaTime = 0.0f;
 
-	PAD_Init();
-
 	while (true)
 	{
-		PAD_ScanPads();
-
 		currentFrameTime = SDL_GetTicks();
 		deltaTime = (currentFrameTime - previousFrameTime) / 1000.0f;
 		previousFrameTime = currentFrameTime;
