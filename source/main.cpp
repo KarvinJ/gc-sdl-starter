@@ -5,6 +5,9 @@
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 
+bool isRunning = true;
+bool isPaused = false;
+
 const int PLAYER_SPEED = 600;
 
 SDL_Rect player = {SCREEN_WIDTH / 2 - 64, SCREEN_HEIGHT / 2 - 64, 64, 64};
@@ -14,26 +17,6 @@ SDL_Rect ball = {SCREEN_WIDTH / 2 + 50, SCREEN_HEIGHT / 2, 32, 32};
 int ballVelocityX = 400;
 int ballVelocityY = 400;
 
-int colorIndex;
-
-SDL_Color colors[] = {
-	{128, 128, 128, 0}, // gray
-	{255, 255, 255, 0}, // white
-	{255, 0, 0, 0},		// red
-	{0, 255, 0, 0},		// green
-	{0, 0, 255, 0},		// blue
-	{255, 255, 0, 0},	// brown
-	{0, 255, 255, 0},	// cyan
-	{255, 0, 255, 0},	// purple
-};
-
-void quitGame()
-{
-	SDL_DestroyRenderer(renderer);
-	SDL_DestroyWindow(window);
-	SDL_Quit();
-}
-
 void handleEvents()
 {
 	SDL_Event event;
@@ -42,29 +25,15 @@ void handleEvents()
 	{
 		if (event.type == SDL_QUIT)
 		{
-			quitGame();
-			exit(0);
+			isRunning = false;
 		}
 	}
 }
 
-int rand_range(int min, int max)
-{
-	return min + rand() / (RAND_MAX / (max - min + 1) + 1);
-}
-
 void update(float deltaTime)
 {
-	// PAD_ButtonsDown tells us which buttons were pressed in this loop
-	// this is a "one shot" state which will not fire again until the button has been released
-	const u32 padDown = PAD_ButtonsDown(0);
-
 	// PAD_ButtonsHeld tells us which buttons are keep pressing in this loop
 	const u32 padHeld = PAD_ButtonsHeld(0);
-
-	// We return to the launcher application via exit
-	if (padDown & PAD_BUTTON_START)
-		exit(0);
 
 	if (padHeld & PAD_BUTTON_LEFT && player.x > 0)
 	{
@@ -89,23 +58,17 @@ void update(float deltaTime)
 	if (ball.x < 0 || ball.x > SCREEN_WIDTH - ball.w)
 	{
 		ballVelocityX *= -1;
-
-		colorIndex = rand_range(0, 5);
 	}
 
 	else if (ball.y < 0 || ball.y > SCREEN_HEIGHT - ball.h)
 	{
 		ballVelocityY *= -1;
-
-		colorIndex = rand_range(0, 5);
 	}
 
 	else if (SDL_HasIntersection(&player, &ball))
 	{
 		ballVelocityX *= -1;
 		ballVelocityY *= -1;
-
-		colorIndex = rand_range(0, 5);
 	}
 
 	ball.x += ballVelocityX * deltaTime;
@@ -118,11 +81,9 @@ void render()
 	SDL_RenderClear(renderer);
 
 	SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
 	SDL_RenderFillRect(renderer, &player);
 
-	SDL_SetRenderDrawColor(renderer, colors[colorIndex].r, colors[colorIndex].g, colors[colorIndex].b, 255);
-
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 	SDL_RenderFillRect(renderer, &ball);
 
 	SDL_RenderPresent(renderer);
@@ -142,14 +103,39 @@ int main(int argc, char **argv)
 	Uint32 currentFrameTime = previousFrameTime;
 	float deltaTime = 0.0f;
 
-	while (true)
+	while (isRunning)
 	{
 		currentFrameTime = SDL_GetTicks();
 		deltaTime = (currentFrameTime - previousFrameTime) / 1000.0f;
 		previousFrameTime = currentFrameTime;
 
+		// PAD_ButtonsDown tells us which buttons were pressed in this loop
+		// this is a "one shot" state which will not fire again until the button has been released
+		const u32 padDown = PAD_ButtonsDown(0);
+
+		if (padDown & PAD_BUTTON_SELECT)
+		{
+			isRunning = false;
+		}
+
+		// We Pause the game when the Start button is pressed, and unpause it when pressed again
+		if (padDown & PAD_BUTTON_START)
+		{
+			isPaused = !isPaused;
+		}
+
 		handleEvents();
-		update(deltaTime);
+
+		if (isPaused)
+		{
+			update(deltaTime);
+		}
+
 		render();
 	}
+
+	SDL_DestroyRenderer(renderer);
+	SDL_DestroyWindow(window);
+	SDL_Quit();
+	exit(0);
 }
