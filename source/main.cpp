@@ -1,6 +1,5 @@
 #include <gccore.h>
 #include "sdl_starter.h"
-#include "sdl_assets_loader.h"
 
 SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
@@ -94,7 +93,7 @@ int main(int argc, char **argv)
 	window = SDL_CreateWindow("My Window", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
-	if (startSDL(window, renderer) > 0)
+	if (startSDLSystems(window, renderer) > 0)
 	{
 		return 1;
 	}
@@ -103,7 +102,7 @@ int main(int argc, char **argv)
 	Uint32 currentFrameTime = previousFrameTime;
 	float deltaTime = 0.0f;
 
-	while (isRunning)
+	while (true)
 	{
 		currentFrameTime = SDL_GetTicks();
 		deltaTime = (currentFrameTime - previousFrameTime) / 1000.0f;
@@ -113,10 +112,10 @@ int main(int argc, char **argv)
 		// this is a "one shot" state which will not fire again until the button has been released
 		const u32 padDown = PAD_ButtonsDown(0);
 
-		if (padDown & PAD_BUTTON_SELECT)
-		{
-			isRunning = false;
-		}
+		// if (padDown & PAD_BUTTON_SELECT)
+		// {
+		// 	isRunning = false;
+		// }
 
 		// We Pause the game when the Start button is pressed, and unpause it when pressed again
 		if (padDown & PAD_BUTTON_START)
@@ -126,7 +125,7 @@ int main(int argc, char **argv)
 
 		handleEvents();
 
-		if (isPaused)
+		if (!isPaused)
 		{
 			update(deltaTime);
 		}
